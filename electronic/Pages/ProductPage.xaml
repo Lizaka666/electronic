@@ -1,0 +1,92 @@
+﻿<Page x:Class="electronic.Pages.ProductPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:electronic.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ProductPage">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel x:Name="filterPanel" Grid.Row="0" Orientation="Horizontal"
+                 Margin="5">
+            <ComboBox x:Name="cmbSort" Width="180" Margin="5"
+                   SelectionChanged="Filters_Changed"/>
+            <ComboBox x:Name="cmbFilter" Width="180" Margin="5"
+                   SelectionChanged="Filters_Changed"/>
+            <TextBox x:Name="txtSearch" Width="250" Margin="5"
+                  TextChanged="Filters_Changed"
+                  ToolTip="Поиск по наименованию и описанию"/>
+        </StackPanel>
+
+        <ListView x:Name="listProduct" Grid.Row="1"
+               MouseDoubleClick="listProduct_MouseDoubleClick">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="5" BorderThickness="1" CornerRadius="4"
+                         BorderBrush="#70B2AF" Background="{Binding RowColor}"
+                         Padding="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="160"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Column="0" Source="{Binding ImagePath}"
+                                Width="100" Height="100" Stretch="Uniform"/>
+
+                            <StackPanel Grid.Column="1" Margin="10,0">
+                                <TextBlock FontWeight="Bold">
+                                 <Run Text="{Binding Manufacturers.ManufacturerName}"/>
+                                 <Run Text=" | "/>
+                                 <Run Text="{Binding Name}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                 <Run Text="Категория: "/>
+                                 <Run Text="{Binding Subcategories.Categories.CategoryName}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                 <Run Text="Количество: "/>
+                                 <Run Text="{Binding QuantityText, Mode=OneWay}"/>
+
+                                </TextBlock>
+                                <TextBlock>
+                                 <Run Text="Состав: "/>
+                                 <Run Text="{Binding Composition}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock FontSize="16" FontWeight="Bold"
+                                        HorizontalAlignment="Right"
+                                        Text="{Binding FinalPrice, StringFormat={}{0:N2} ₽}"/>
+                                <TextBlock Foreground="Red"
+                                        TextDecorations="Strikethrough"
+                                        HorizontalAlignment="Right"
+                                        Text="{Binding Price, StringFormat={}{0:N2} ₽}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                 HorizontalAlignment="Center">
+
+            <Button Content="Удалить товар" Click="Del_Click"
+                 Background="#ff8080"/>
+            <Button Content="Корзина" Click="Cart_Click"/>
+            <Button Content="Заказы" Click="Orders_Click"/>
+            <Button Content="Выход" Click="Exit_Click" Background="#AAAAAA"/>
+        </StackPanel>
+    </Grid>
+</Page>
