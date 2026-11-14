@@ -6,7 +6,12 @@
       xmlns:local="clr-namespace:electronic.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProductPage">
+      Title="Страница товаров">
+
+    <Page.Resources>
+        <!-- Конвертер для скрытия старой цены, если скидки нет -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Page.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -15,78 +20,94 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="filterPanel" Grid.Row="0" Orientation="Horizontal"
-                 Margin="5">
-            <ComboBox x:Name="cmbSort" Width="180" Margin="5"
-                   SelectionChanged="Filters_Changed"/>
-            <ComboBox x:Name="cmbFilter" Width="180" Margin="5"
-                   SelectionChanged="Filters_Changed"/>
-            <TextBox x:Name="txtSearch" Width="250" Margin="5"
-                  TextChanged="Filters_Changed"
-                  ToolTip="Поиск по наименованию и описанию"/>
+        <!-- Верхняя панель: Поиск и фильтры -->
+        <StackPanel x:Name="filterPanel" Grid.Row="0" Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
+            <ComboBox x:Name="cmbSort" Width="180" Margin="5" Padding="3" SelectionChanged="Filters_Changed"/>
+            <ComboBox x:Name="cmbFilter" Width="180" Margin="5" Padding="3" SelectionChanged="Filters_Changed"/>
+            <TextBox x:Name="txtSearch" Width="250" Margin="5" Padding="3" TextChanged="Filters_Changed" ToolTip="Поиск по наименованию и описанию"/>
         </StackPanel>
 
-        <ListView x:Name="listProduct" Grid.Row="1"
-               MouseDoubleClick="listProduct_MouseDoubleClick">
+        <!-- Центральная часть: Список товаров -->
+        <ListView x:Name="listProduct" Grid.Row="1" Margin="5" MouseDoubleClick="listProduct_MouseDoubleClick" HorizontalContentAlignment="Stretch">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="5" BorderThickness="1" CornerRadius="4"
-                         BorderBrush="#70B2AF" Background="{Binding RowColor}"
-                         Padding="10">
+                    <!-- Карточка товара -->
+                    <Border x:Name="ProductBorder" Margin="5" BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Background="White" Padding="10">
+
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Column="0" Source="{Binding ImagePath}"
-                                Width="100" Height="100" Stretch="Uniform"/>
+                            <Image Grid.Column="0" Source="{Binding ImagePath}" Width="100" Height="100" Stretch="Uniform"/>
 
-                            <StackPanel Grid.Column="1" Margin="10,0">
-                                <TextBlock FontWeight="Bold">
-                                 <Run Text="{Binding Manufacturers.ManufacturerName}"/>
-                                 <Run Text=" | "/>
-                                 <Run Text="{Binding Name}"/>
+                            <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                <TextBlock FontWeight="Bold" FontSize="14" TextWrapping="Wrap">
+                                    <Run Text="{Binding Manufacturer.manufacturer1}"/>
+                                    <Run Text=" | "/>
+                                    <Run Text="{Binding name}"/>
                                 </TextBlock>
-                                <TextBlock>
-                                 <Run Text="Категория: "/>
-                                 <Run Text="{Binding Subcategories.Categories.CategoryName}"/>
-                                </TextBlock>
-                                <TextBlock>
-                                 <Run Text="Количество: "/>
-                                 <Run Text="{Binding QuantityText, Mode=OneWay}"/>
 
+                                <TextBlock Margin="0,5,0,0">
+                                    <Run Text="Категория: " FontWeight="SemiBold"/>
+                                    <Run Text="{Binding Category.category1}"/>
                                 </TextBlock>
-                                <TextBlock>
-                                 <Run Text="Состав: "/>
-                                 <Run Text="{Binding Composition}"/>
+
+                                <TextBlock TextWrapping="Wrap">
+                                    <Run Text="Состав: " FontWeight="SemiBold"/>
+                                    <Run Text="{Binding consist}"/>
                                 </TextBlock>
                             </StackPanel>
 
-                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                <TextBlock FontSize="16" FontWeight="Bold"
-                                        HorizontalAlignment="Right"
-                                        Text="{Binding FinalPrice, StringFormat={}{0:N2} ₽}"/>
-                                <TextBlock Foreground="Red"
-                                        TextDecorations="Strikethrough"
-                                        HorizontalAlignment="Right"
-                                        Text="{Binding Price, StringFormat={}{0:N2} ₽}"/>
+                            <!-- Цены и скидки -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <!-- Старая цена -->
+                                <TextBlock Foreground="Gray" TextDecorations="Strikethrough" HorizontalAlignment="Right" FontSize="14"
+                                           Text="{Binding oldPrice, StringFormat={}{0:N0} ₽}"
+                                           Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}"/>
+
+                                <!-- Текущая цена -->
+                                <TextBlock FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"
+                                           Text="{Binding price, StringFormat={}{0:N0} ₽}"/>
+
+                                <!-- Процент скидки -->
+                                <TextBlock Foreground="Green" HorizontalAlignment="Right" FontSize="12"
+                                           Text="{Binding discountPercent, StringFormat='Скидка: {0}%'}"
+                                           Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVis}}"/>
+                                <Button Content="На склад" Click="btnAddStock_Click" Background="#FAD7A1" Margin="5" Padding="5"/>
+                                <Button x:Name="btnAddToCart" Content="В корзину" Click="btnAddToCart_Click" Loaded="btnAddToCart_Loaded"
+                                            Background="CadetBlue" Foreground="White" Width="90" Padding="3" Margin="0,10,0,0" HorizontalAlignment="Right"/>
                             </StackPanel>
                         </Grid>
                     </Border>
+
+                    <!-- Триггеры для бизнес-логики UI -->
+                    <DataTemplate.Triggers> 
+                        
+                        <DataTrigger Binding="{Binding IsExpensive}" Value="True">
+                            <Setter TargetName="ProductBorder" Property="Background" Value="#FFF7F7"/>
+                            <Setter TargetName="ProductBorder" Property="BorderBrush" Value="#FFCCCCCC"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal"
-                 HorizontalAlignment="Center">
-
-            <Button Content="Удалить товар" Click="Del_Click"
-                 Background="#ff8080"/>
-            <Button Content="Корзина" Click="Cart_Click"/>
-            <Button Content="Заказы" Click="Orders_Click"/>
-            <Button Content="Выход" Click="Exit_Click" Background="#AAAAAA"/>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+            <Button x:Name="btnUsers" Content="Пользователи" Click="btnUsers_Click" Background="#FFB6C1" Padding="10,5" Margin="5"/>
+            <Button x:Name="btnAdd" Content="Добавить" Click="Add_Click" Width="100" Padding="5" Margin="5" Background="#D4E6F1"/>
+            <!-- Нежно-голубой -->
+            <Button x:Name="btnDelete" Content="Удалить" Click="Del_Click" Width="100" Padding="5" Margin="5" Background="#FF6B6B" Foreground="White" FontWeight="SemiBold"/>
+            <!-- Красный -->
+            <Button x:Name="btnCart" Content="Корзина" Click="Cart_Click" Width="100" Padding="5" Margin="5" Background="#D4E6F1"/>
+            <!-- Нежно-голубой -->
+            <Button x:Name="btnOrders" Content="Заказы" Click="Orders_Click" Width="100" Padding="5" Margin="5" Background="#D4E6F1"/>
+            <!-- Нежно-голубой -->
+            <Button x:Name="btnExit" Content="Выход" Click="Exit_Click" Width="100" Padding="5" Margin="5" Background="#E5E7E9"/>
+            <!-- Нейтральный серый -->
         </StackPanel>
+
     </Grid>
 </Page>

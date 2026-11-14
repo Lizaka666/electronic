@@ -28,6 +28,8 @@ namespace electronic.Data
         public string description { get; set; }
         public string consist { get; set; }
         public decimal price { get; set; }
+        public Nullable<int> discountPercent { get; set; }
+        public Nullable<decimal> oldPrice { get; set; }
     
         public virtual Category Category { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }

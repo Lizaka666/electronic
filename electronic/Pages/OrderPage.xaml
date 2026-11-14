@@ -6,62 +6,73 @@
       xmlns:local="clr-namespace:electronic.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="OrderPage">
+      Title="Страница заказов">
 
-    <Grid Margin="20">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Список заказов" FontSize="24"
-               FontWeight="Bold" Margin="0,0,0,10"/>
+        <Grid Grid.Row="0" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <ListView x:Name="listOrders" Grid.Row="1"
-              MouseDoubleClick="listOrders_MouseDoubleClick" SelectionChanged="listOrders_SelectionChanged">
+            <TextBlock Grid.Column="0" Text="Список заказов" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+
+            <!-- Кнопка создания нового заказа -->
+            <Button Grid.Column="1" x:Name="btnAddOrder" Content="Создать заказ" Click="btnAddOrder_Click" 
+                    Background="#A9DFBF" FontWeight="Bold" Padding="15,5"/>
+        </Grid>
+
+        <ListView x:Name="listOrders" Grid.Row="1" Margin="5" HorizontalContentAlignment="Stretch">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="5" Padding="10" BorderBrush="#70B2AF"
-                        BorderThickness="1" Background="#D2F6E7"
-                        CornerRadius="4">
+                    <Border Margin="5" BorderThickness="1" CornerRadius="4" BorderBrush="CadetBlue" Background="White" Padding="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="250"/>
-                                <ColumnDefinition Width="180"/>
-                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <!-- Номер и дата -->
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding OrderTitle}" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock Text="{Binding OrderDate}" Foreground="Gray" Margin="0,5,0,0"/>
+                            </StackPanel>
 
-                            <TextBlock FontWeight="Bold">
-                            <Run Text="Заказ №"/>
-                            <Run Text="{Binding OrderNumber}"/>
-                            </TextBlock>
+                            <!-- Инфа для админа и статус -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0">
+                                <TextBlock Text="{Binding ClientInfo}" FontStyle="Italic" Foreground="DarkSlateGray" Visibility="{Binding IsAdminInfoVisible}"/>
+                                <TextBlock Text="{Binding StatusName}" FontWeight="SemiBold" Foreground="DarkBlue" Margin="0,5,0,0"/>
+                            </StackPanel>
 
-                            <TextBlock Grid.Column="1">
-                            <Run Text="Клиент: "/>
-                            <Run Text="{Binding Users.FIO, Mode=OneWay}"/>
-                            </TextBlock>
-
-                            <TextBlock Grid.Column="2">
-                            <Run Text="Дата: "/>
-                            <Run Text="{Binding OrderDate, StringFormat=dd.MM.yyyy}"/>
-                            </TextBlock>
-
-                            <TextBlock Grid.Column="3" FontWeight="Bold"
-                                   Text="{Binding TotalSum, StringFormat={}{0:N2} ₽}"/>
+                            <!-- Сумма -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <TextBlock Text="Сумма заказа:" Foreground="Gray" FontSize="12" HorizontalAlignment="Right"/>
+                                <TextBlock Text="{Binding TotalSum, StringFormat='{}{0:N0} ₽'}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                                <Button Content="Отменить заказ" Click="btnCancelOrder_Click" Visibility="{Binding IsCancelVisible}" Background="#FFD580" Margin="0,0,10,0" Padding="10,5"/>
+                                <!-- Видна Админу и Менеджеру -->
+                                <Button Content="Редактировать статус" Click="btnEdit_Click" Visibility="{Binding IsEditVisible}" Background="#D4E6F1" Margin="0,0,10,0" Padding="10,5"/>
+                                <!-- Видна  Админу -->
+                                <Button Content="Удалить заказ" Click="btnDelete_Click" Visibility="{Binding IsDeleteVisible}" Background="#FF6B6B" Foreground="White" Padding="10,5"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal"
-        HorizontalAlignment="Center" Margin="0,15,0,0">
-            <Button Content="Добавить заказ" Click="Add_Click"/>
-            <Button Content="Редактировать" Click="Edit_Click"/>
-            <Button Content="Удалить заказ" Background="#ff8080" Click="Del_Click"/>
-            <Button Content="Назад" Click="Back_Click"/>
-        </StackPanel>
+        <!-- Кнопка назад -->
+        <Button Grid.Row="2" x:Name="btnBack" Content="Назад" Click="btnBack_Click" Background="#E5E7E9" Width="100" Padding="10" HorizontalAlignment="Right" Margin="5"/>
     </Grid>
 </Page>

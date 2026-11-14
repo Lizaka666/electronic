@@ -1,0 +1,75 @@
+﻿<Page x:Class="electronic.Pages.EditOrderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Редактирование заказа">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Заголовок и статус -->
+            <RowDefinition Height="*"/>
+            <!-- Список товаров -->
+            <RowDefinition Height="Auto"/>
+            <!-- Добавление нового товара -->
+            <RowDefinition Height="Auto"/>
+            <!-- Кнопки сохранения -->
+        </Grid.RowDefinitions>
+
+        <!-- ВЕРХ: Статус -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock x:Name="txtOrderTitle" Text="Заказ №" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,20,0"/>
+            <TextBlock Text="Статус:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="cmbStatus" DisplayMemberPath="Status" Width="200" Padding="5"/>
+        </StackPanel>
+
+        <!--  Товары в заказе -->
+        <ListView x:Name="listOrderItems" Grid.Row="1" Margin="0,5,0,10" HorizontalContentAlignment="Stretch">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="1" BorderBrush="LightGray" Padding="5" Margin="0,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding DisplayName}" VerticalAlignment="Center" FontWeight="Bold"/>
+
+                            <!-- Редактирование цены -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Цена:" Foreground="Gray" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding EditPrice, UpdateSourceTrigger=PropertyChanged}" MaxLength="11" Width="80" Padding="2"/>
+                                <TextBlock Text=" ₽" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Количество -->
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Button Content=" - " Width="25" Click="btnMinus_Click"/>
+                                <TextBlock Text="{Binding CurrentCount}" Width="30" TextAlignment="Center" VerticalAlignment="Center"/>
+                                <Button Content=" + " Width="25" Click="btnPlus_Click"/>
+                            </StackPanel>
+
+                            <!-- Удаление товара из заказа -->
+                            <Button Grid.Column="3" Content="Удалить" Click="btnRemoveItem_Click" Background="#FF6B6B" Foreground="White"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Border Grid.Row="2" Background="#F8F9F9" BorderBrush="LightGray" BorderThickness="1" Padding="10" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Добавить товар:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
+                <ComboBox x:Name="cmbAddStock" DisplayMemberPath="DisplayName" Width="350" Margin="0,0,10,0"/>
+                <Button Content="Добавить в чек" Click="btnAddItem_Click" Background="#D4E6F1" Padding="10,5"/>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Сохранить изменения" Click="btnSave_Click" Width="150" Background="#A9DFBF" FontWeight="Bold" Padding="10" Margin="0,0,10,0"/>
+            <Button Content="Отмена" Click="btnCancel_Click" Width="100" Background="#E5E7E9" Padding="10"/>
+        </StackPanel>
+    </Grid>
+</Page>

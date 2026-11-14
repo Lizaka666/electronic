@@ -24,20 +24,35 @@ namespace electronic.Pages
         public AutorizationPage()
         {
             InitializeComponent();
+            this.IsVisibleChanged += Page_IsVisibleChanged;
         }
 
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // Как только страница снова появляется на экране - стираем данные
+            if (Visibility == Visibility.Visible)
+            {
+                txtLogin.Text = "";
 
+                txtPassword.Password = "";
+            }
+        }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             AppConnect.user = null;
+            AppConnect.mainFrame.Navigate(new ProductPage());
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             string login = txtLogin.Text.Trim();
-            string password = txtPassword.Text.Trim();
+            string password = txtPassword.Password.Trim();
 
-            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return;
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Не корректный логин или пароль");
+                return;
+            }
 
             var u = AppConnect.model1.User.FirstOrDefault(x => x.login == login && x.password == password);
             if (u == null)
@@ -47,6 +62,11 @@ namespace electronic.Pages
             }
             AppConnect.user = u;
             AppConnect.mainFrame.Navigate(new ProductPage());
+        }
+
+        private void btnReg_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new RegistrationPage());
         }
     }
 }

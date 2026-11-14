@@ -36,7 +36,6 @@ namespace electronic.Data
         public virtual DbSet<Size> Size { get; set; }
         public virtual DbSet<StatusOrder> StatusOrder { get; set; }
         public virtual DbSet<Stock> Stock { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<User> User { get; set; }
     }
 }

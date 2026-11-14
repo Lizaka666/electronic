@@ -24,9 +24,19 @@ namespace electronic
         public MainWindow()
         {
             InitializeComponent();
-            AppConnect.model1 = new electronicEntities();
+            //AppConnect.model1 = new electronicEntities();
+            AppConnect.model1 = new electronicEntities(); 
             AppConnect.mainFrame = MainFrame;//подключаем мэйнфрейм
             MainFrame.Navigate(new Pages.AutorizationPage());
+
+        }
+
+        private void btnProfile_Click(object sender, RoutedEventArgs e)
+        {
+            if (electronic.Data.AppConnect.user != null)
+            {
+                MainFrame.Navigate(new electronic.Pages.ProfilePage());
+            }
         }
     }
 }
